@@ -17,22 +17,15 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-      - name: Set up Android SDK
-        uses: wzieba/Fake-Android-SDK@v1
-        with:
-          accept-licenses: true
-          sdk-components: 'platform-tools,build-tools-30.0.3,android-30'
+      - name: Accept Android licenses
+        run: yes | sdkmanager --licenses
 
       - name: Create Emulator
         run: |
-          echo no | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n custom_emulator -k "system-images;android-30;google_apis;x86_64" --force
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          PATH: ${{ env.ANDROID_HOME }}/cmdline-tools/latest/bin:$PATH
+          echo no | avdmanager create avd -n custom_emulator -k "system-images;android-30;google_apis;x86_64" --force
 
       - name: Start Emulator
         run: |
-          $ANDROID_HOME/emulator/emulator -avd custom_emulator -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          emulator -avd custom_emulator -no-window -no-snapshot -noaudio -no-boot-anim
         env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          PATH: ${{ env.ANDROID_HOME }}/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
+          PATH: $ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools:$PATH
